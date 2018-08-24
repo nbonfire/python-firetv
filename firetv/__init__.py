@@ -391,6 +391,21 @@ class FireTV:
 
         return self._send_intent(PACKAGE_LAUNCHER, INTENT_HOME)
 
+    def _url(self, url):
+        if not self._adb:
+            return None
+
+	cmd = 'am start -a android.intent.action.VIEW -d {}; echo $?'.format(url)
+        logging.debug("Sending an url %s", url)
+
+        # adb shell outputs in weird format, so we cut it into lines,
+        # separate the retcode and return info to the user
+        res = self._adb.Shell(cmd).strip().split("\r\n")
+        retcode = res[-1]
+        output = "\n".join(res[:-1])
+
+        return {"retcode": retcode, "output": output}
+
     @property
     def current_app(self):
         current_focus = self._dump("window windows", "mCurrentFocus").replace("\r", "")
