@@ -108,6 +108,21 @@ def add_device():
     return jsonify(success=success)
 
 
+@app.route('/devices/launch_url', methods=['POST'])
+def launch_url():
+    """ send a url to display on firetv via HTTP POST.
+    POST JSON in the following format ::
+        {
+            "device_id": "<your_device_id>",
+            "url": "https://<url>"
+        }
+    """
+    req = request.get_json()
+    success = False
+    if 'device_id' in req and 'url' in req:
+        success = _url(req['device_id'], req['url'])
+    return jsonify(success=success)
+
 @app.route('/devices/list', methods=['GET'])
 def list_devices():
     """ List devices via HTTP GET. """
